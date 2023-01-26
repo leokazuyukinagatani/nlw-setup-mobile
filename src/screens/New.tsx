@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -11,6 +12,7 @@ import { BackButton } from '../components/BackButton'
 import { Checkbox } from '../components/Checkbox'
 import { Feather } from '@expo/vector-icons'
 import colors from 'tailwindcss/colors'
+import { api } from '../lib/api'
 
 const availableWeekDays = [
   'Domingo',
@@ -23,7 +25,7 @@ const availableWeekDays = [
 
 export function New() {
   const [weekDays, setWeekDays] = useState<number[]>([])
-
+  const [title, setTitle] = useState('')
   function handleToggleWeekDay(weekDayIndex: number) {
     if (weekDays.includes(weekDayIndex)) {
       setWeekDays((prevState) =>
@@ -31,6 +33,26 @@ export function New() {
       )
     } else {
       setWeekDays((prevState) => [...prevState, weekDayIndex])
+    }
+  }
+
+  async function handleCreateNewHabit() {
+    try {
+      if (!title.trim()) {
+        Alert.alert('Novo Hábito', 'Informe o novo hábito')
+      } else if (weekDays.length === 0) {
+        Alert.alert('Novo Hábito', 'Selecione ao menos um dia')
+      }
+
+      await api.post('/habits', { title, weekDays })
+
+      setTitle('')
+      setWeekDays([])
+
+      Alert.alert('Novo Hábito', 'Hábito criado com sucesso')
+    } catch (error) {
+      console.log(error)
+      Alert.alert('Ops', 'Não foi possível criar o novo hábito')
     }
   }
   return (
@@ -51,6 +73,8 @@ export function New() {
           className="h-12 pl-4 rounded-lg mt-3 mb-3 bg-zinc-900 text-white border-2 border-zinc-800  focus:border-violet-600"
           placeholder="Exercicios, dormir bem, etc..."
           placeholderTextColor={colors.zinc[400]}
+          onChangeText={setTitle}
+          value={title}
         />
         <Text className="font-semibold mt-4 mb-3 text-white text-base">
           Qual a recorrência?
@@ -67,6 +91,7 @@ export function New() {
         <TouchableOpacity
           className="w-full h-14 flex-row items-center justify-center bg-violet-600 rounded-md mt-6"
           activeOpacity={0.7}
+          onPress={handleCreateNewHabit}
         >
           <Feather name="check" size={20} color={colors.white} />
           <Text className="font-semibold text-base text-white ml-2">
