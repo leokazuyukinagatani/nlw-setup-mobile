@@ -16,18 +16,18 @@ export const DAY_SIZE =
 
 interface HabitDayProps extends TouchableOpacityProps {
   amountOfHabits?: number
-  amountComplete?: number
+  amountCompleted?: number
   date: Date
 }
 export function HabitDay({
   amountOfHabits = 0,
-  amountComplete = 0,
+  amountCompleted = 0,
   date,
   ...rest
 }: HabitDayProps) {
   const amountAccomplishedPercentage =
     amountOfHabits > 0
-      ? generateProgressPercentage(amountOfHabits, amountComplete)
+      ? generateProgressPercentage(amountOfHabits, amountCompleted)
       : 0
 
   const today = dayjs().startOf('day').toDate()
