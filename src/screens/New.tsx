@@ -4,7 +4,6 @@ import {
   ScrollView,
   Text,
   TextInput,
-  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -36,18 +35,21 @@ export function New() {
     }
   }
 
+  function clearInputs() {
+    setTitle('')
+    setWeekDays([])
+  }
+
   async function handleCreateNewHabit() {
     try {
       if (!title.trim()) {
-        Alert.alert('Novo Hábito', 'Informe o novo hábito')
+        return Alert.alert('Novo Hábito', 'Informe o novo hábito')
       } else if (weekDays.length === 0) {
-        Alert.alert('Novo Hábito', 'Selecione ao menos um dia')
+        return Alert.alert('Novo Hábito', 'Selecione ao menos um dia')
       }
 
       await api.post('/habits', { title, weekDays })
-
-      setTitle('')
-      setWeekDays([])
+      clearInputs()
 
       Alert.alert('Novo Hábito', 'Hábito criado com sucesso')
     } catch (error) {
@@ -55,6 +57,8 @@ export function New() {
       Alert.alert('Ops', 'Não foi possível criar o novo hábito')
     }
   }
+
+
   return (
     <View className="flex-1 bg-background px-8 pt-16">
       <ScrollView
